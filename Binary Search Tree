@@ -1,0 +1,291 @@
+#include <iostream>
+using namespace std;
+
+class ST
+{
+public:
+    int id, cet;
+    string name, add;
+    ST *Lc, *Rc;
+
+    void create();
+    void addNew();
+    void insert(ST *root, ST *next);
+    void display(ST *root);
+    int count(ST *root);
+    bool search(ST *root, int key);
+
+    
+    void topper(ST *root);
+    void lastTopper(ST *root);
+
+    void firstThreeTopper(ST *root, int &c);
+    void disIIT(ST *root);
+    void disNonIIT(ST *root);
+    int height(ST *root);
+
+    string admission_status(int marks);
+};
+
+ST *root = NULL;
+
+void ST::create()
+{
+    ST *next = new ST;
+    cout << "\nEnter ID, Name, CET: ";
+    cin >> next->id >> next->name >> next->cet;
+
+    next->add = admission_status(next->cet);
+
+    next->Lc = next->Rc = NULL;
+    root = next;
+}
+
+string ST::admission_status(int marks)
+{
+    if (marks > 95)
+        return "IIT";
+    else
+        return "Non-IIT";
+}
+
+void ST::addNew()
+{
+    ST *next = new ST;
+    cout << "\nEnter ID, Name, CET: ";
+    cin >> next->id >> next->name >> next->cet;
+
+    next->add = admission_status(next->cet);
+
+    next->Lc = next->Rc = NULL;
+
+    insert(root, next);
+}
+
+
+void ST::insert(ST *root, ST *next)
+{
+    if (next->cet < root->cet)
+    {
+        if (root->Lc == NULL)
+            root->Lc = next;
+        else
+            insert(root->Lc, next);
+    }
+    else
+    {
+        if (root->Rc == NULL)
+            root->Rc = next;
+        else
+            insert(root->Rc, next);
+    }
+}
+
+
+void ST::display(ST *root)
+{
+    if (root == NULL)
+        return;
+
+    display(root->Lc);
+    cout << "\nID: " << root->id
+         << " Name: " << root->name
+         << " CET: " << root->cet
+         << " Admission: " << root->add;
+    display(root->Rc);
+}
+
+
+int ST::count(ST *root)
+{
+    if (root == NULL)
+        return 0;
+
+    return 1 + count(root->Lc) + count(root->Rc);
+}
+
+
+bool ST::search(ST *root, int key)
+{
+    if (root == NULL)
+        return false;
+
+    if (root->id == key)
+    {
+        cout << "\nStudent Found";
+        cout << "\nID: " << root->id;
+        cout << "\nName: " << root->name;
+        cout << "\nCET: " << root->cet;
+        cout << "\nAdmission: " << root->add;
+        return true;
+    }
+
+    if (search(root->Lc, key))
+        return true;
+
+    return search(root->Rc, key);
+}
+
+
+void ST::topper(ST *root)
+{
+    if (root == NULL)
+        return;
+
+    while (root->Rc != NULL)
+        root = root->Rc;
+
+    cout << "\nTopper: " << root->name << " " << root->cet;
+}
+
+
+void ST::lastTopper(ST *root)
+{
+    if (root == NULL)
+        return;
+
+    while (root->Lc != NULL)
+        root = root->Lc;
+
+    cout << "\nLowest CET: " << root->name << " " << root->cet;
+}
+
+
+void ST::firstThreeTopper(ST *root, int &c)
+{
+    if (root == NULL || c >= 3)
+        return;
+
+    firstThreeTopper(root->Rc, c);
+
+    if (c < 3)
+    {
+        cout << "\n" << root->name << " " << root->cet;
+        c++;
+    }
+
+    firstThreeTopper(root->Lc, c);
+}
+
+
+void ST::disIIT(ST *root)
+{
+    if (root == NULL)
+        return;
+
+    disIIT(root->Lc);
+
+    if (admission_status(root->cet) == "IIT")
+        cout << "\n" << root->name << " " << root->cet;
+
+    disIIT(root->Rc);
+}
+
+
+void ST::disNonIIT(ST *root)
+{
+    if (root == NULL)
+        return;
+
+    disNonIIT(root->Lc);
+
+    if (admission_status(root->cet) == "Non-IIT")
+        cout << "\n" << root->name << " " << root->cet;
+
+    disNonIIT(root->Rc);
+}
+
+
+int ST::height(ST *root)
+{
+    if (root == NULL)
+        return -1;
+
+    return max(height(root->Lc), height(root->Rc)) + 1;
+}
+
+
+int main()
+{
+    ST s;
+    int ch, id;
+
+    s.create();
+
+    do
+    {
+        cout << "\n\n--- MENU ---";
+        cout << "\n1. Add New Student";
+        cout << "\n2. Display Students";
+        cout << "\n3. Count Students";
+        cout << "\n4. Topper";
+        cout << "\n5. Lowest CET Student";
+        cout << "\n6. First Three Toppers";
+        cout << "\n7. IIT Students";
+        cout << "\n8. Non-IIT Students";
+        cout << "\n9. Height of Tree";
+        cout << "\n10. Search Student by ID";
+        cout << "\n11. Exit";
+        cout << "\nEnter choice: ";
+        cin >> ch;
+
+        switch (ch)
+        {
+        case 1:
+            s.addNew();
+            break;
+
+        case 2:
+            s.display(root);
+            break;
+
+        case 3:
+            cout << "\nTotal Students: " << s.count(root);
+            break;
+
+        case 4:
+            s.topper(root);   
+            break;
+
+        case 5:
+            s.lastTopper(root);  
+            break;
+
+        case 6:
+        {
+            int c = 0;
+            cout << "\nFirst Three Toppers:";
+            s.firstThreeTopper(root, c);
+            break;
+        }
+
+        case 7:
+            cout << "\nIIT Students:";
+            s.disIIT(root);
+            break;
+
+        case 8:
+            cout << "\nNon-IIT Students:";
+            s.disNonIIT(root);
+            break;
+
+        case 9:
+            cout << "\nHeight: " << s.height(root);
+            break;
+
+        case 10:
+            {
+              cout << "\nEnter ID: ";
+              cin >> id;
+ 
+             if (!s.search(root, id))
+             cout << "\nStudent Not Found";
+
+            break;
+            }
+        }
+
+    } while (ch != 11);
+
+    return 0;
+}
