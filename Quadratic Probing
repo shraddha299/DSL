@@ -1,0 +1,200 @@
+#include<iostream>
+using namespace std;
+
+class student
+{
+    int rno, prn;
+    string name, add;
+    int n;
+
+public:
+    void create();
+    void displayTable();
+    void insert();
+    void search();
+    void update();
+    void deletePrn();
+    
+} h[10];
+
+int key[10];
+
+void student::create()
+{
+    cout<<"\nEnter number of keys: ";
+    cin>>n;
+
+    cout<<"\nEnter PRN values:\n";
+    for(int i=0;i<n;i++)
+        cin>>key[i];
+
+    for(int i=0;i<10;i++)
+        h[i].prn = -1;
+}
+
+void student::displayTable()
+{
+    cout<<"\nLoc\tPRN\tRno\tName\tAddress";
+    for(int i=0;i<10;i++)
+    {
+        cout<<"\n"<<i<<"\t"<<h[i].prn<<"\t"<<h[i].rno
+            <<"\t"<<h[i].name<<"\t"<<h[i].add;
+    }
+}
+
+void student::insert()
+{
+    int loc;
+
+    for(int i=0;i<n;i++)
+    {
+        int original = key[i] % 10;
+
+        for(int j=0;j<10;j++)   
+        {
+            loc = (original + j*j) % 10;
+
+            if(h[loc].prn == -1)
+            {
+                h[loc].prn = key[i];
+                cout<<"\nEnter Name Address RollNo: ";
+                cin>>h[loc].name>>h[loc].add>>h[loc].rno;
+                break;
+            }
+        }
+    }
+}
+
+void student::search()
+{
+    int k, loc;
+
+    cout<<"\nEnter PRN to search: ";
+    cin>>k;
+
+    int original = k % 10;
+
+    for(int j=0;j<10;j++)
+    {
+        loc = (original + j*j) % 10;
+
+        if(h[loc].prn == k)
+        {
+            cout<<"\nStudent Found!";
+            cout<<"\nName: "<<h[loc].name;
+            cout<<"\nAddress: "<<h[loc].add;
+            cout<<"\nRoll No: "<<h[loc].rno;
+            return;
+        }
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+void student::update()
+{
+    int k, loc;
+
+    cout<<"\nEnter PRN to update: ";
+    cin>>k;
+
+    int original = k % 10;
+
+    for(int j=0;j<10;j++)
+    {
+        loc = (original + j*j) % 10;
+
+        if(h[loc].prn == k)
+        {
+            cout<<"\nEnter new Name Address RollNo: ";
+            cin>>h[loc].name>>h[loc].add>>h[loc].rno;
+            cout<<"\nUpdated successfully!";
+            return;
+        }
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+void student::deletePrn()
+{
+    int k;
+    cout<<"\nEnter PRN to delete:";
+    cin>>k;
+
+    int original = k % 10;
+
+    for(int j=0;j<10;j++)
+    {
+        int loc = (original + j*j) % 10;
+
+        if(h[loc].prn == k)
+        {
+            h[loc].prn = -1;  
+            h[loc].name = "";
+            h[loc].add = "";
+            h[loc].rno = 0;
+
+            cout<<"\nDeleted successfully!";
+            return;
+        }
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+int main()
+{
+    student s;
+    int choice;
+
+    do
+    {
+        cout<<"\n\n--- MENU ---";
+        cout<<"\n1. Create";
+        cout<<"\n2. Insert";
+        cout<<"\n3. Display";
+        cout<<"\n4. Search";
+        cout<<"\n5. Update";
+        cout<<"\n6. Delete";
+        cout<<"\n7. Exit";
+        cout<<"\nEnter choice: ";
+        cin>>choice;
+
+        switch(choice)
+        {
+            case 1: 
+            s.create(); 
+            break;
+            
+            case 2: 
+            s.insert(); 
+            break;
+            
+            case 3: 
+            s.displayTable(); 
+            break;
+            
+            case 4: 
+            s.search(); 
+            break;
+            
+            case 5: 
+            s.update();
+            break;
+            
+            case 6:
+            s.deletePrn();
+            break;
+            
+            case 7: 
+            cout<<"\nExiting..."; 
+            break;
+            
+            default: cout<<"\nInvalid choice!";
+        }
+
+    } while(choice != 7);
+
+    return 0;
+}
