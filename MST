@@ -1,0 +1,136 @@
+#include<iostream>
+using namespace std;
+
+class MST
+{   
+public:
+    int v,dist;
+    string city[10];
+    int ad[10][10];
+    int parent[10], key[10];
+    bool visited[10];
+    
+    void create();
+    void display();
+    void M_ST();
+    void Path(int);
+};
+
+void MST :: create()
+{
+    cout<<"\nEnter total no. of cities :";
+    cin >> v;
+
+    cout<<"\nEnter City name :";
+    for(int i=0;i<v;i++)
+    {
+        cin>>city[i];
+    }
+
+    for(int i=0;i<v;i++)
+    {
+        for(int j=0;j<v;j++)
+        {
+            if(i < j)
+            {
+                cout<<"\nEnter Distance from "<<city[i]<<" to "<<city[j]<<": ";
+                cin>>dist;
+
+                ad[i][j] = ad[j][i] = dist;   
+            }
+            else if(i == j)
+            {
+                ad[i][j] = 0;  
+            }
+        }
+    }
+}
+
+void MST :: M_ST()
+{
+    for(int i=0;i<v;i++)
+    {
+        key[i] = 999;
+        visited[i] = false;
+    }
+
+    key[0] = 0; 
+    parent[0]=-1;
+
+    for(int count=0; count<v-1; count++)
+    {
+        int min = 999, u;
+
+        for(int i=0;i<v;i++)
+        {
+            if(!visited[i] && key[i] < min)
+            {
+                min = key[i];
+                u = i;
+            }
+        }
+
+        visited[u] = true;
+
+        for(int j=0;j<v;j++)
+        {
+            if(!visited[j] && ad[u][j]!=0 && key[u] + ad[u][j] < key[j])
+            {
+                key[j] = key[u] + ad[u][j];
+                parent[j] = u;
+            }
+        }
+    }
+}
+
+void MST :: display()
+{
+    cout<<"\n\nAdjacency Matrix:\n\t";
+    for(int i=0;i<v;i++)
+        cout<<city[i]<<"\t";
+
+    for(int i=0;i<v;i++)
+    {
+        cout<<"\n"<<city[i]<<"\t";
+        for(int j=0;j<v;j++)
+        {
+            cout<<ad[i][j]<<"\t";
+        }
+    }
+
+    cout<<"\n\nShortest Distance :\n";
+
+    for(int i=0;i<v;i++)
+    {
+        cout<<city[0]<<" To "<<city[i]<<" = "<<key[i]<<endl;
+    }
+    
+    cout<<"\nPath from current location:";
+    for(int i=0;i<v;i++)
+    {
+        cout<<"\nPath to "<<city[i]<<" : ";
+        Path(i);
+        cout<<" Distance = "<<key[i];
+    }
+}
+
+void MST::Path(int i)
+{
+    if(parent[i]==-1)
+    {
+        cout<<city[i];
+        return;
+    }
+    
+    Path(parent[i]);
+    cout<<"->"<<city[i];
+}
+
+int main()
+{
+    MST a;
+    a.create();
+    a.M_ST();
+    a.display();
+    return 0;
+}
