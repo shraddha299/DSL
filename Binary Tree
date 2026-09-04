@@ -1,0 +1,259 @@
+#include<iostream>
+using namespace std;
+
+class FT
+{
+    int age, mob;
+    string name, edu;
+    FT *Lc, *Rc;
+
+public:
+    void create();
+    void addFamily(FT *root, FT *next);
+    void displayFamily(FT *root);
+    int height(FT *root);
+    bool ancestors(FT *root, string key);
+    void leafNodes(FT *root);
+    bool search(FT *root, string key);   
+    void siblings(FT *root, string key); 
+    void ancestorsofAll(FT *root);
+} *root;
+
+
+void FT::create()
+{
+    root = new FT;
+    cout << "\nEnter Name,Age,Education,Mob: ";
+    cin >> root->name >> root->age >> root->edu >> root->mob;
+    root->Lc = root->Rc = NULL;
+
+    FT *next;
+    int ch;
+    do
+    {
+        next = new FT;
+        cout << "Enter New Member Name Age Education Mob: ";
+        cin >> next->name >> next->age >> next->edu >> next->mob;
+        next->Lc = next->Rc = NULL;
+
+        addFamily(root, next);
+
+        cout << "Enter 1 to continue: ";
+        cin >> ch;
+    } while (ch == 1);
+}
+
+
+void FT::addFamily(FT *root, FT *next)
+{
+    char c;
+    cout << "Add member of " << root->name << " on (L/R): ";
+    cin >> c;
+
+    if (c == 'L' || c == 'l')
+    {
+        if (root->Lc == NULL)
+        {
+            root->Lc = next;
+        }
+        else
+        {
+            addFamily(root->Lc, next);
+        }
+    }
+    else
+    {
+        if (root->Rc == NULL)
+        {
+            root->Rc = next;
+        }
+        else
+        {
+            addFamily(root->Rc, next);
+        }
+    }
+}
+
+
+void FT::displayFamily(FT *root)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+    else
+    {
+      cout << "\n" << root->name << "\t" << root->age << "\t" << root->edu << "\t" << root->mob;
+      displayFamily(root->Lc);
+      displayFamily(root->Rc);
+    }
+}
+
+
+int FT::height(FT *root)
+{
+    if (root == NULL)
+    {
+        return -1;
+    }
+    else
+    { 
+      int left = height(root->Lc);
+      int right = height(root->Rc);
+      return(max(left,right)+1);
+    }
+}
+
+
+bool FT::ancestors(FT *root, string key)
+{
+    if (root == NULL)
+        return false;
+
+    if (root->name == key)
+        return true;
+
+    if (ancestors(root->Lc, key) || ancestors(root->Rc, key))
+    {
+        cout << root->name << " ";
+        return true;
+    }
+    return false;
+}
+
+
+void FT::leafNodes(FT *root)
+{
+    if (root == NULL)
+        return;
+
+    if (root->Lc == NULL && root->Rc == NULL)
+    {
+        cout << "\n" << root->name;
+    }
+    leafNodes(root->Lc);
+    leafNodes(root->Rc);
+}
+
+bool FT::search(FT *root, string key)
+{
+    if (root == NULL)
+        return false;
+
+    if (root->name == key)
+    {
+        cout << "\nMember Found:";
+        cout << "\nName: " << root->name;
+        cout << "\nAge: " << root->age;
+        cout << "\nEducation: " << root->edu;
+        cout << "\nMobile: " << root->mob;
+        return true;
+    }
+
+    return search(root->Lc, key) || search(root->Rc, key);
+}
+
+
+void FT::ancestorsofAll(FT *root)
+{
+     cout << "\nName: " << root->name;
+     cout << "\nAge: " << root->age;
+     cout << "\nEducation: " << root->edu;
+     cout << "\nMobile: " << root->mob;
+}
+
+
+void FT::siblings(FT *root, string key)
+{
+    if (root == NULL)
+        return;
+
+    if (root->Lc && root->Rc)
+    {
+        if (root->Lc->name == key)
+            cout << root->Rc->name;
+        else if (root->Rc->name == key)
+            cout << root->Lc->name;
+    }
+
+    siblings(root->Lc, key);
+    siblings(root->Rc, key);
+}
+
+
+int main()
+{
+    FT f;
+    int ch;
+    string key;
+
+    f.create();
+
+    do
+    {
+        cout << "\n\n---- MENU ----";
+        cout << "\n1. Display Family Tree";
+        cout << "\n2. Height of Tree";
+        cout << "\n3. Ancestors of Member";
+        cout << "\n4. Leaf Nodes";
+        cout << "\n5. Siblings of Member";
+        cout << "\n6. Search Member";
+        cout << "\n7. Ancestors of All";
+        cout << "\n8. Exit";
+        cout << "\nEnter choice: ";
+        cin >> ch;
+
+        switch (ch)
+        {
+        case 1:
+            f.displayFamily(root);
+            break;
+
+        case 2:
+            cout << "Height: " << f.height(root);
+            break;
+
+        case 3:
+            cout << "Enter name: ";
+            cin >> key;
+            cout << "Ancestors: ";
+            if (!f.ancestors(root, key))
+                cout << "Member not found";
+            break;
+
+        case 4:
+            cout << "Leaf Nodes:";
+            f.leafNodes(root);
+            break;
+
+        case 5:
+            cout << "Enter name: ";
+            cin >> key;
+            cout << "Siblings: ";
+            f.siblings(root, key);
+            break;
+
+        case 6:
+            cout << "Enter name: ";
+            cin >> key;
+            if (!f.search(root, key))
+                cout << "Member not found";
+            break;
+            
+        case 7:
+        cout << "\nAncestors of All ";
+        f.ancestorsofAll(root);
+        break;
+        
+        case 8:
+            cout << "Exit";
+            break;
+
+        default:
+            cout << "Invalid choice";
+        }
+
+    } while (ch != 8);
+
+    return 0;
+}
