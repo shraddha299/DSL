@@ -1,0 +1,146 @@
+#include<iostream>
+using namespace std;
+
+class shop
+{
+public:
+    int n;
+    float p[100], q[100];
+    string name[100];
+    float c[100][100], w[100][100];
+    int r[100][100];
+
+    void accept();
+    void OBST();
+    void display(int, int);
+};
+
+
+void shop::accept()
+{
+    cout<<"Enter number of items: ";
+    cin>>n;
+
+    cout<<"Enter names:\n";
+    for(int i=1; i<=n; i++)
+    {
+        cin>>name[i];
+    }
+
+    cout<<"Enter successful probabilities p[i]:\n";
+    for(int i=1; i<=n; i++)
+    {
+        cin>>p[i];
+    }
+
+    cout<<"Enter unsuccessful probabilities q[i]:\n";
+    for(int i=0; i<=n; i++)
+    {
+        cin>>q[i];
+    }
+}
+
+
+void shop::OBST()
+{
+    
+    for(int i=0; i<=n; i++)
+    {
+        w[i][i] = q[i];
+        c[i][i] = 0;
+        r[i][i] = 0;
+    }
+
+    
+    for(int len=1; len<=n; len++)
+    {
+        for(int i=0; i<=n-len; i++)
+        {
+            int j = i + len;
+
+            w[i][j] = p[j] + q[j] + w[i][j-1];
+            c[i][j] = 9999;
+
+            for(int k=i+1; k<=j; k++)
+            {
+                float cost = c[i][k-1] + c[k][j] + w[i][j];
+
+                if(cost < c[i][j])
+                {
+                    c[i][j] = cost;
+                    r[i][j] = k;
+                }
+            }
+        }
+    }
+
+    cout<<"\nOBST constructed successfully!\n";
+}
+
+void shop::display(int i, int j)
+{
+    if(i < j)
+    {
+        int root = r[i][j];
+
+        cout<<"\nRoot: "<<name[root];
+
+        cout<<"\nLeft child of "<<name[root]<<": ";
+        if(i < root-1)
+            cout<<name[r[i][root-1]];
+        else
+            cout<<"NULL";
+
+        cout<<"\nRight child of "<<name[root]<<": ";
+        if(root < j)
+            cout<<name[r[root][j]];
+        else
+            cout<<"NULL";
+
+        display(i, root-1);
+        display(root, j);
+    }
+}
+
+int main()
+{
+    shop s;
+    int ch;
+
+    do
+    {
+        cout<<"\n===== MENU =====\n";
+        cout<<"1. Accept Data\n";
+        cout<<"2. Construct OBST\n";
+        cout<<"3. Display OBST\n";
+        cout<<"4. Exit\n";
+        cout<<"Enter choice: ";
+        cin>>ch;
+
+        switch(ch)
+        {
+            case 1:
+                s.accept();
+                break;
+
+            case 2:
+                s.OBST();
+                break;
+
+            case 3:
+                cout<<"\nDisplaying OBST:\n";
+                s.display(0, s.n);
+                break;
+
+            case 4:
+                cout<<"\nExiting...\n";
+                break;
+
+            default:
+                cout<<"\nInvalid choice!";
+        }
+
+    } while(ch != 4);
+
+    return 0;
+}
