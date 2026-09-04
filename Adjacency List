@@ -1,0 +1,98 @@
+#include<iostream>
+using namespace std;
+
+class AL
+{
+    int v,e,fuel;
+    string city;
+    AL *next;
+    
+    public :
+    void create();
+    void addEdge();
+    void display();
+    
+}*head[100];
+
+void AL :: create()
+{
+    cout<<"\nEnter no. of Cities :";
+    cin>>v;
+    
+    for(int i=0;i<v;i++)
+    {
+       head[i] = new AL;
+       cout<<"\nEnter city name :";
+       cin >> head[i]->city;
+       head[i]->next = NULL;
+    }
+}
+
+void AL :: addEdge()
+{
+    AL *n,*temp;
+    string s,d;
+    
+    cout<<"\nEnter no. of Edge :";
+    cin >> e ;
+    
+    for(int i=0;i<e;i++)
+    {
+        cout<<"\nEnter Source and Destination City :";
+        cin >> s >> d;
+        
+        int j;
+        for(j=0;j<v;j++)
+        {
+           if(s == head[j]->city)   
+           {
+               break;
+           }
+        }
+        
+        n = new AL;    
+        n->city = d;
+        
+        cout<<"\nEnter Fuel :";
+        cin >> n->fuel;
+        
+        n->next = NULL;
+        temp = head[j];
+        
+        while(temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = n;
+    }
+}
+
+void AL :: display()
+{
+    AL *temp;
+    
+    for(int i=0;i<v;i++)
+    {
+        temp = head[i];
+        
+        cout<<"\n" << temp->city << " -> ";
+        temp = temp->next;
+        
+        while(temp != NULL)
+        {
+            cout << temp->city << "(" << temp->fuel << ") -> ";
+            temp = temp->next;
+        }
+        cout << "NULL";
+    }
+}
+
+int main()
+{
+    AL a;
+    a.create();
+    a.addEdge();
+    a.display();
+    
+    return 0;
+}
