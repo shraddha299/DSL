@@ -1,0 +1,66 @@
+#include<iostream>
+using namespace std;
+
+class AM
+{
+    int v,e;
+    string city[10];
+    int fuel;
+    int ad[10][10];
+    
+    public :
+    void create();
+    void display();
+};
+
+void AM :: create()
+{
+    cout<<"\nEnter total no. of cities :";
+    cin >> v;
+    cout<<"\nEnter City name :";
+    for(int i=0;i<v;i++)
+    {
+        cin>>city[i];
+    }
+    for(int i=0;i<v;i++)
+    {
+       for(int j=0;j<v;j++)
+       {
+           if(i!=j)
+           {
+               cout<<"\nEnter Fuel Require for Source city "<<city[i]<<" to "<<city[j];
+               cin>>fuel;
+               ad[i][j] = ad[j][i] = fuel;
+           }
+           else
+           {
+               ad[i][j] = 0;
+           }
+       }
+    }
+}
+
+void AM :: display()
+{
+    cout<<"\t";
+    for(int i=0;i<v;i++)
+    {
+        cout<<"\t"<<city[i];
+    }
+    for(int i=0;i<v;i++)
+    {
+        cout<<"\n"<<city[i];
+        for(int j=0;j<v;j++)
+        {
+            cout<<"\t"<<ad[i][j];
+        }
+    }
+}
+
+int main()
+{
+    AM a;
+    a.create();
+    a.display();
+    return 0;
+}
