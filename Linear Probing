@@ -1,0 +1,242 @@
+#include<iostream>
+using namespace std;
+
+class student
+{
+    int rno, prn;
+    string name, add;
+    int n;
+
+    public:
+    void create();
+    void displayTable();
+    void insert();
+    void search();
+    void update();
+    void deletePrn();
+    
+}h[10];
+
+int key[10], chain[10];
+
+
+void student::create()
+{
+    cout<<"\nEnter number of keys: ";
+    cin>>n;
+
+    cout<<"\nEnter PRN values:\n";
+    for(int i=0;i<n;i++)
+        cin>>key[i];
+
+    for(int i=0;i<10;i++)
+    {
+        h[i].prn = -1;
+        chain[i] = -2;
+    }
+}
+
+
+void student::displayTable()
+{
+    cout<<"\nLoc\tPRN\tRno\tName\tAddress\tChain";
+    for(int i=0;i<10;i++)
+    {
+        cout<<"\n"<<i<<"\t"<<h[i].prn<<"\t"<<h[i].rno<<"\t"<<h[i].name<<"\t"<<h[i].add<<"\t"<<chain[i];
+    }
+}
+
+void student::insert()
+{
+    int loc, pos;
+
+    for(int i=0;i<n;i++)
+    {
+        loc = key[i] % 10;
+        pos = loc;
+
+     
+        if(h[loc].prn == -1)
+        {
+            h[loc].prn = key[i];
+            cout<<"\nEnter Name Address RollNo: ";
+            cin>>h[loc].name>>h[loc].add>>h[loc].rno;
+        }
+        else
+        {
+            
+            while(loc < 10 && h[loc].prn != -1)
+            {
+                loc++;
+            }
+
+            if(loc < 10)
+            {
+                h[loc].prn = key[i];
+                cout<<"\nEnter Name Address RollNo: ";
+                cin>>h[loc].name>>h[loc].add>>h[loc].rno;
+
+              
+                if(chain[pos] == -2)
+                {
+                    chain[pos] = loc;
+                }
+                else
+                {
+                    int temp = pos;
+                    while(chain[temp] != -2)
+                    {
+                        temp = chain[temp];
+                    }
+                    chain[temp] = loc;
+                }
+            }
+            else
+            {
+                cout<<"\nHash table is full!";
+            }
+        }
+    }
+}
+
+
+ 
+
+void student::search()
+{
+    int k, loc;
+
+    cout<<"\nEnter PRN to search: ";
+    cin>>k;
+
+    loc = k % 10;
+
+    while(loc != -2)
+    {
+        if(h[loc].prn == k)
+        {
+            cout<<"\nStudent Found!";
+            cout<<"\nName: "<<h[loc].name;
+            cout<<"\nAddress: "<<h[loc].add;
+            cout<<"\nRoll No: "<<h[loc].rno;
+            cout<<"\nPRN: "<<h[loc].prn;
+            return;
+        }
+        loc = chain[loc];
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+void student::update()
+{
+    int k, loc;
+
+    cout<<"\nEnter PRN to update: ";
+    cin>>k;
+
+    loc = k % 10;
+
+    while(loc != -2)
+    {
+        if(h[loc].prn == k)
+        {
+            cout<<"\nEnter new Name Address RollNo: ";
+            cin>>h[loc].name>>h[loc].add>>h[loc].rno;
+            cout<<"\nUpdated successfully!";
+            return;
+        }
+        loc = chain[loc];
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+void student::deletePrn()
+{
+    int k, loc, prev = -1;
+
+    cout<<"\nEnter PRN to delete: ";
+    cin>>k;
+
+    loc = k % 10;
+
+    while(loc != -2)
+    {
+        if(h[loc].prn == k)
+        {
+            h[loc].prn = -1;
+            h[loc].name = "";
+            h[loc].add = "";
+            h[loc].rno = 0;
+
+            if(prev != -1)
+                chain[prev] = chain[loc];
+
+            chain[loc] = -2;
+
+            cout<<"\nDeleted successfully!";
+            return;
+        }
+        prev = loc;
+        loc = chain[loc];
+    }
+
+    cout<<"\nStudent not found!";
+}
+
+
+int main()
+{
+    student s;
+    int choice;
+
+    do {
+        cout<<"\n\n--- MENU ---";
+        cout<<"\n1. Create";
+        cout<<"\n2. Insert";
+        cout<<"\n3. Display";
+        cout<<"\n4. Search";
+        cout<<"\n5. Update";
+        cout<<"\n6. Delete";
+        cout<<"\n7. Exit";
+        cout<<"\nEnter choice: ";
+        cin>>choice;
+
+        switch(choice)
+        {
+            case 1: 
+            s.create(); 
+            break;
+            
+            case 2: 
+            s.insert();
+            break;
+            
+            case 3: 
+            s.displayTable();
+            break;
+            
+            case 4:
+            s.search();
+            break;
+            
+            case 5: 
+            s.update();
+            break;
+            
+            case 6:
+            s.deletePrn(); 
+            break;
+            
+            case 7: 
+            cout<<"\nExiting...";
+            break;
+            
+            default: cout<<"\nInvalid choice!";
+        }
+
+    } while(choice != 7);
+
+    return 0;
+}
