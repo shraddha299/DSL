@@ -1,0 +1,144 @@
+#include<iostream>
+using namespace std;
+
+class Heap
+{
+    int key[100];
+    int cnt;   
+    int deleted[50];
+    int j=0;
+    int n;
+
+public:
+    Heap() { cnt = 0; }
+
+    void accept();
+    void build(int value);
+    void insert();
+    void display();
+    void deleteRoot();
+};
+
+void Heap::accept()
+{
+    int value;
+    cout <<"Enter no. of keys: ";
+    cin >> n;
+
+    cout << "Enter keys:\n";
+    for(int i = 0; i < n; i++)
+    {
+        cin >> value;
+        build(value);
+    }
+}
+
+void Heap::build(int value)
+{
+    cnt++;
+    key[cnt] = value;
+
+    int i = cnt;
+    int parent;
+
+    while(i > 1)
+    {
+        parent = i / 2;
+
+        if(key[parent] < key[i])
+        {
+            swap(key[parent], key[i]);
+            i = parent;
+        }
+        else
+            break;
+    }
+}
+
+void Heap::insert()
+{
+    int value;
+    cout << "Enter value to insert: ";
+    cin >> value;
+
+    build(value);
+}
+
+void Heap::deleteRoot()
+{
+    if(cnt == 0)
+    {
+        cout << "Heap is empty\n";
+        cout << "Deleted elements in heap:\n";
+    for(int i = 0; i < n; i++)
+        cout << deleted[i] << " ";
+    cout << endl;
+        return;
+    }
+    
+    deleted[j] = key[1];
+    j++;
+    key[1] = key[cnt];
+    cnt--;
+
+    int i = 1;
+    int lc, rc, loc;
+
+    while(true)
+    {
+        lc = 2 * i;
+        rc = 2 * i + 1;
+
+        if(lc > cnt) break;
+
+        if(rc > cnt || key[lc] > key[rc])
+            loc = lc;
+        else
+            loc = rc;
+
+        if(key[i] < key[loc])
+        {
+            swap(key[i], key[loc]);
+            i = loc;
+        }
+        else
+            break;
+    }
+    
+     
+}
+
+// Display heap
+void Heap::display()
+{
+    cout << "Heap elements:\n";
+    for(int i = 1; i <= cnt; i++)
+        cout << key[i] << " ";
+    cout << endl;
+    
+   
+}
+
+// Main function
+int main()
+{
+    Heap h;
+    int ch;
+
+    do
+    {
+        cout << "\n1.Accept\n2.Insert\n3.Delete Root\n4.Display\n5.Exit\n";
+        cout << "Enter choice: ";
+        cin >> ch;
+
+        switch(ch)
+        {
+            case 1: h.accept(); break;
+            case 2: h.insert(); break;
+            case 3: h.deleteRoot(); break;
+            case 4: h.display(); break;
+        }
+    } while(ch != 5);
+
+    return 0;
+}
